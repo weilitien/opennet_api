@@ -54,29 +54,20 @@ rest-api-tests/
 
 ---
 
-## 🔍 Validation Strategy
-
-| Validation | Used where | Why |
-|------------|-----------|-----|
-| **Status code** | All tests | Primary HTTP contract — wrong code = broken endpoint |
-| **`assert_login_response` schema** | TC-01b | Catches silent field removal that would break all downstream token usage |
-| **`assert_token_is_jwt`** | TC-01c/d, TC-03b/c | JWT structure + `exp` claim check — catches malformed tokens before they silently fail elsewhere |
-| **`assert_tokens_are_different`** | TC-03d | Proves the refresh endpoint actually issues NEW tokens, not echoes the old one |
-| **Follow-up request with refreshed token** | TC-03e | The only way to prove a new token actually works — not just structurally valid |
-| **`password` field absent** | TC-02c | Security check — password exposure is a critical bug |
-| **`parametrize` on bad credentials** | TC-01i | 4 invalid combos in 1 function, zero duplication |
-| **`parametrize` on product categories** | TC-04g | Proves the API accepts different product types, not a hardcoded fixture |
-| **`isDeleted: true` check** | TC-04k | Confirms deletion was acknowledged — not just an empty 200 |
-| **Auth guard on every method** | TC-02d/e, TC-04c/h/j/l | Every protected endpoint must reject unauthenticated requests consistently |
-
----
-
 ## 🚀 Running the Tests
 
 ```bash
-# 1. Clone & install
+# 1. Setup
 git clone <your-repo-url>
 cd rest-api-tests
+
+python3 -m venv .venv
+
+# macOS / Linux
+source .venv/bin/activate
+# Windows
+.venv\Scripts\activate
+
 pip install -r requirements.txt
 
 # 2. Run everything (no token setup needed — credentials are built in)
