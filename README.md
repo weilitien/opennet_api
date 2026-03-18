@@ -54,45 +54,6 @@ rest-api-tests/
 
 ---
 
-## 🧪 Test Cases
-
-| # | TC | Method | Endpoint | Type | Steps | Expected Result | Validation |
-|---|-----|--------|----------|------|-------|-----------------|------------|
-| 1 | TC-01a | POST | `/auth/login` | ✅ Login | Valid credentials | HTTP 200 | `assert_status_code(200)` |
-| 2 | TC-01b | POST | `/auth/login` | ✅ Login | Valid credentials | Body has all required fields | `assert_login_response` (schema) |
-| 3 | TC-01c | POST | `/auth/login` | ✅ Login | Valid credentials | `accessToken` is a valid JWT with `exp` claim | `assert_token_is_jwt` |
-| 4 | TC-01d | POST | `/auth/login` | ✅ Login | Valid credentials | `refreshToken` is a valid JWT | `assert_token_is_jwt` |
-| 5 | TC-01e | POST | `/auth/login` | ✅ Login | Valid credentials | `username` in response matches what we sent | `assert_field_equals("username")` |
-| 6 | TC-01f | POST | `/auth/login` | ❌ Auth | Wrong password | HTTP 400 | `assert_status_code(400)` |
-| 7 | TC-01g | POST | `/auth/login` | ❌ Auth | Wrong username | HTTP 400 | `assert_status_code(400)` |
-| 8 | TC-01h | POST | `/auth/login` | ❌ Auth | Empty credentials | HTTP 400 | `assert_status_code(400)` |
-| 9 | TC-01i×4 | POST | `/auth/login` | ❌ Auth | 4 bad-credential combos | HTTP 400 for all | `parametrize` |
-| 10 | TC-02a | GET | `/auth/me` | ✅ Protected | Valid token | HTTP 200 | `assert_status_code(200)` |
-| 11 | TC-02b | GET | `/auth/me` | ✅ Protected | Valid token | `username` matches login account | `assert_field_equals("username")` |
-| 12 | TC-02c | GET | `/auth/me` | ✅ Protected | Valid token | No `password` field in response | `"password" not in data` |
-| 13 | TC-02d | GET | `/auth/me` | ❌ Auth | No token | HTTP 401 | `assert_unauthorised` |
-| 14 | TC-02e | GET | `/auth/me` | ❌ Auth | Fake/garbage JWT | HTTP 401 | `assert_unauthorised` |
-| 15 | TC-03a | POST | `/auth/refresh` | ✅ Refresh | Valid refreshToken | HTTP 200 | `assert_status_code(200)` |
-| 16 | TC-03b | POST | `/auth/refresh` | ✅ Refresh | Valid refreshToken | New `accessToken` is valid JWT | `assert_token_is_jwt` |
-| 17 | TC-03c | POST | `/auth/refresh` | ✅ Refresh | Valid refreshToken | New `refreshToken` is valid JWT | `assert_token_is_jwt` |
-| 18 | TC-03d | POST | `/auth/refresh` | ✅ Refresh | Valid refreshToken | New `accessToken` ≠ original | `assert_tokens_are_different` |
-| 19 | TC-03e | POST | `/auth/refresh` | ✅ Refresh | Use refreshed token on `/auth/me` | HTTP 200 — token is usable | `assert_status_code(200)` |
-| 20 | TC-03f | POST | `/auth/refresh` | ❌ Refresh | Fake refreshToken | HTTP 401 | `assert_unauthorised` |
-| 21 | TC-04a | GET | `/auth/products` | ✅ CRUD | Valid token | HTTP 200 + valid schema list | `assert_all_products_schema` |
-| 22 | TC-04b | GET | `/auth/products/1` | ✅ CRUD | Valid token | `id == 1` | `assert_field_equals("id", 1)` |
-| 23 | TC-04c | GET | `/auth/products` | ❌ Auth | No token | HTTP 401 | `assert_unauthorised` |
-| 24 | TC-04d | GET | `/auth/products/999999` | ❌ CRUD | Valid token | HTTP 404 | `assert_status_code(404)` |
-| 25 | TC-04e | POST | `/auth/products/add` | ✅ CRUD | Valid token + payload | HTTP 201 + schema valid | `assert_product_schema` |
-| 26 | TC-04f | POST | `/auth/products/add` | ✅ CRUD | title echoed back | Response title matches payload | `assert_field_equals("title")` |
-| 27 | TC-04g×3 | POST | `/auth/products/add` | ✅ CRUD | 3 different categories | All 3 return 201 | `parametrize` |
-| 28 | TC-04h | POST | `/auth/products/add` | ❌ Auth | No token | HTTP 401 | `assert_unauthorised` |
-| 29 | TC-04i | PUT | `/auth/products/1` | ✅ CRUD | Update title | HTTP 200, title changed | `assert_field_equals("title")` |
-| 30 | TC-04j | PUT | `/auth/products/1` | ❌ Auth | No token | HTTP 401 | `assert_unauthorised` |
-| 31 | TC-04k | DELETE | `/auth/products/1` | ✅ CRUD | Valid token | HTTP 200 + `isDeleted: true` | `data["isDeleted"] is True` |
-| 32 | TC-04l | DELETE | `/auth/products/1` | ❌ Auth | No token | HTTP 401 | `assert_unauthorised` |
-
----
-
 ## 🔍 Validation Strategy
 
 | Validation | Used where | Why |
@@ -128,25 +89,4 @@ pytest tests/test_products.py -v
 
 # 4. HTML report
 pytest --html=report.html --self-contained-html
-```
-
----
-
-## 📊 Expected Output
-
-```
-tests/test_login.py::TestLogin::test_valid_login_returns_200 PASSED
-tests/test_login.py::TestLogin::test_valid_login_response_schema PASSED
-tests/test_login.py::TestLogin::test_valid_login_access_token_is_jwt PASSED
-...
-tests/test_login.py::test_invalid_credential_combinations_return_400[emilys-wrongpass] PASSED
-tests/test_login.py::test_invalid_credential_combinations_return_400[nobody-emilyspass] PASSED
-...
-tests/test_token_refresh.py::TestTokenRefresh::test_refreshed_token_works_on_protected_endpoint PASSED
-...
-tests/test_products.py::TestCreateProduct::test_create_products_parametrized[Laptop Pro-999.99-electronics] PASSED
-tests/test_products.py::TestCreateProduct::test_create_products_parametrized[Cozy Blanket-29.99-home] PASSED
-tests/test_products.py::TestCreateProduct::test_create_products_parametrized[Running Shoes-79.99-sports] PASSED
-...
-========== 32 passed in X.XXs ==========
 ```

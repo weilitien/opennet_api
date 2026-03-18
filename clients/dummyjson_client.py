@@ -49,7 +49,7 @@ class DummyJsonClient:
         )
 
     # ------------------------------------------------------------------
-    # Products (authenticated CRUD via /auth/products)
+    # Products
     # ------------------------------------------------------------------
 
     def get_products(self, **params) -> requests.Response:

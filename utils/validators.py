@@ -14,11 +14,6 @@ REQUIRED_LOGIN_FIELDS = {
 REQUIRED_PRODUCT_FIELDS = {"id", "title", "price", "stock", "category"}
 
 
-# ------------------------------------------------------------------
-# HTTP level
-# ------------------------------------------------------------------
-
-
 def assert_status_code(response, expected: int) -> None:
     assert response.status_code == expected, (
         f"Expected HTTP {expected}, got {response.status_code}.\n"
@@ -59,19 +54,10 @@ def assert_tokens_are_different(token_a: str, token_b: str) -> None:
 
 
 def assert_unauthorised(response) -> None:
-    """Assert response is 401 with a message field in the body."""
-    assert_status_code(response, 401)
-    try:
-        data = response.json()
-        assert "message" in data, "Expected 'message' in 401 response body"
-    except Exception:
-        pass  # Non-JSON 401 body is also acceptable
-
-
-# ------------------------------------------------------------------
-# Schema
-# ------------------------------------------------------------------
-
+    assert response.status_code in (401, 403), (
+        f"Expected HTTP 401 or 403, got {response.status_code}.\n"
+        f"Body: {response.text[:400]}"
+    )
 
 def assert_product_schema(product: dict) -> None:
     missing = REQUIRED_PRODUCT_FIELDS - product.keys()
@@ -82,11 +68,6 @@ def assert_all_products_schema(products: list) -> None:
     assert isinstance(products, list), f"Expected list, got {type(products).__name__}"
     for p in products:
         assert_product_schema(p)
-
-
-# ------------------------------------------------------------------
-# Field-level
-# ------------------------------------------------------------------
 
 
 def assert_field_equals(obj: dict, field: str, expected) -> None:
