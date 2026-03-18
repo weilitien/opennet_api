@@ -50,9 +50,6 @@ mypy:
 		--ignore-missing-imports \
 		--exclude __pycache__
 
-lint: ruff-check mypy
-	@echo ">>> All lint checks passed!"
-
 # ------------------------------------------------------------------------------
 # Auto-format
 # ------------------------------------------------------------------------------
