@@ -8,7 +8,7 @@ built with **Python + pytest** as part of an AQA home test.
 
 ---
 
-## 🔑 Auth Flow
+## Auth Flow
 
 ```
 POST /auth/login  ──→  accessToken + refreshToken
@@ -30,7 +30,7 @@ POST /auth/refresh ──→  new accessToken + refreshToken
 
 ---
 
-## 📁 Project Structure
+## Project Structure
 
 ```
 rest-api-tests/
@@ -54,7 +54,7 @@ rest-api-tests/
 
 ---
 
-## 🚀 Running the Tests
+## Running the Tests
 
 ```bash
 # 1. Setup
