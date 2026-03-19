@@ -110,7 +110,6 @@ rest-api-tests/
 - Login runs **once per session** in `conftest.py` — no repeated logins per test
 - `auth_client` fixture injects token automatically via `set_token()`
 - `client` fixture is unauthenticated — used for 401 tests
-- `PyJWT` decodes tokens structurally without re-verifying the server secret
 
 ---
 
